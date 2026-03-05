@@ -15,7 +15,10 @@ import {
     Download,
     Check,
     AlertCircle,
-    Zap
+    Zap,
+    Building2,
+    GitBranch,
+    Binary
 } from 'lucide-react';
 
 export default function Results() {
@@ -166,6 +169,35 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                         </CardContent>
                     </Card>
 
+                    {/* Company Intel Block */}
+                    {data.companyIntel && (
+                        <Card className="border-none shadow-xl shadow-gray-200/50 bg-gray-900 text-white overflow-hidden">
+                            <div className="bg-primary-500 h-1.5 w-full"></div>
+                            <CardHeader className="pb-2">
+                                <CardTitle className="text-sm font-black uppercase tracking-widest text-primary-400 flex items-center gap-2">
+                                    <Building2 className="w-4 h-4" /> Company Intel
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p className="text-[10px] text-gray-500 font-bold uppercase">Industry</p>
+                                        <p className="text-sm font-bold">{data.companyIntel.industry}</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-[10px] text-gray-500 font-bold uppercase">Size Category</p>
+                                        <p className="text-sm font-bold">{data.companyIntel.size}</p>
+                                    </div>
+                                </div>
+                                <div className="p-3 bg-white/5 rounded-xl border border-white/10">
+                                    <p className="text-[10px] text-primary-400 font-black uppercase mb-1">Hiring Focus</p>
+                                    <p className="text-xs text-gray-300 leading-relaxed font-medium">{data.companyIntel.hiringFocus}</p>
+                                </div>
+                                <p className="text-[10px] text-gray-600 italic">Demo Mode: Company intel generated heuristically.</p>
+                            </CardContent>
+                        </Card>
+                    )}
+
                     <Card className="border-none shadow-xl shadow-gray-200/50">
                         <CardHeader className="pb-2">
                             <CardTitle className="flex items-center gap-2 text-gray-800">
@@ -250,6 +282,45 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                             </div>
                         </CardContent>
                     </Card>
+
+                    {/* Round Mapping Timeline */}
+                    {data.roundMapping && (
+                        <Card className="border-none shadow-xl shadow-gray-200/50">
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2 font-bold text-gray-800">
+                                    <GitBranch className="w-5 h-5 text-primary-500" /> Interview Round Flow
+                                </CardTitle>
+                                <p className="text-xs text-gray-400 font-medium">Predicted based on company size and skill requirements.</p>
+                            </CardHeader>
+                            <CardContent className="pt-2 pb-10">
+                                <div className="space-y-0 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-100 before:to-transparent">
+                                    {data.roundMapping.map((round, i) => (
+                                        <div key={i} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                                            {/* Dot */}
+                                            <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-primary-500 text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-bold text-sm">
+                                                {i + 1}
+                                            </div>
+                                            {/* Card */}
+                                            <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-2xl bg-gray-50 border border-gray-100 group-hover:bg-white group-hover:border-primary-200 group-hover:shadow-md transition-all">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <h4 className="font-black text-gray-900 leading-tight">{round.round}</h4>
+                                                    <span className="text-[10px] font-black uppercase text-primary-500 bg-primary-50 px-2 py-0.5 rounded-full">{round.type}</span>
+                                                </div>
+                                                <p className="text-xs text-primary-600 font-bold italic mb-3">"{round.why}"</p>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {round.items.map((item, j) => (
+                                                        <span key={j} className="text-[10px] bg-white border border-gray-100 px-2 py-1 rounded-md text-gray-600 font-medium">
+                                                            {item}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
 
                     <Card className="border-none shadow-xl shadow-gray-200/50">
                         <CardHeader>

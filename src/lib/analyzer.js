@@ -126,6 +126,64 @@ export function analyzeJD(company, role, jdText) {
         }
     }
 
+    // Company Intel Heuristics
+    const enterpriseNames = ["google", "amazon", "microsoft", "meta", "apple", "netflix", "infosys", "tcs", "wipro", "accenture", "cognizant", "ibm", "oracle", "sap", "adobe", "salesforce"];
+    const isEnterprise = enterpriseNames.some(n => company.toLowerCase().includes(n));
+    const companySize = isEnterprise ? "Enterprise (2000+)" : "Startup (<200)";
+    const hiringFocus = isEnterprise
+        ? "Structured DSA + Deep Computer Science Fundamentals"
+        : "Practical Problem Solving + Direct Stack Implementation Depth";
+
+    // Dynamic Round Mapping Engine
+    const hasDSA = text.includes("dsa") || text.includes("algorithm") || text.includes("structure");
+    const hasPractical = text.includes("react") || text.includes("node") || text.includes("javascript") || text.includes("python");
+
+    const roundMapping = isEnterprise ? [
+        {
+            round: "Round 1: Online Assessment",
+            type: "DSA + Aptitude",
+            why: "Filters candidates based on speed and core problem-solving accuracy.",
+            items: ["70 mins duration", "2-3 coding problems", "20 MCQs (OS, DBMS)"]
+        },
+        {
+            round: "Round 2: Technical Interview I",
+            type: "Core DSA",
+            why: "Deep dive into your logical thinking and code optimization skills.",
+            items: ["Live coding", "Complexity analysis", "Edge case handling"]
+        },
+        {
+            round: "Round 3: Technical Interview II",
+            type: "System Design/Project",
+            why: "Assesses how you handle complex architectures and scale.",
+            items: ["LLD/HLD discussion", "Project deep dive", "Database schema design"]
+        },
+        {
+            round: "Round 4: HR & Behavioral",
+            type: "Culture Fit",
+            why: "Ensures alignment with company values and long-term retention.",
+            items: ["Leadership principles", "Conflict resolution", "Salary discussion"]
+        }
+    ] : [
+        {
+            round: "Round 1: Machine Coding",
+            type: "Practical Task",
+            why: "Verifies you can build a working feature from scratch in limited time.",
+            items: ["Build a small app/component", "Code quality check", "UI/UX awareness"]
+        },
+        {
+            round: "Round 2: Technical Discussion",
+            type: "Stack Depth",
+            why: "Ensures you understand the 'how' and 'why' of your primary tools.",
+            items: ["Framework internals", "State management", "API optimization"]
+        },
+        {
+            round: "Round 3: Founder/CTO Round",
+            type: "Mindset & Fit",
+            why: "Critical for startups to ensure you are adaptable and high-ownership.",
+            items: ["Product vision", "Agile experience", "Compensation & Equity"]
+        }
+    ];
+
     const result = {
         id: Date.now().toString(),
         createdAt: new Date().toISOString(),
@@ -137,8 +195,15 @@ export function analyzeJD(company, role, jdText) {
         checklist,
         questions,
         baseReadinessScore: readinessScore,
-        readinessScore: readinessScore, // dynamic score starts at base
-        skillConfidenceMap: {} // Starts empty, default is "practice"
+        readinessScore: readinessScore,
+        skillConfidenceMap: {},
+        companyIntel: {
+            name: company || "Unknown Company",
+            industry: "Technology Services",
+            size: companySize,
+            hiringFocus: hiringFocus
+        },
+        roundMapping
     };
 
     return result;
