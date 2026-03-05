@@ -126,7 +126,7 @@ export function analyzeJD(company, role, jdText) {
         }
     }
 
-    return {
+    const result = {
         id: Date.now().toString(),
         createdAt: new Date().toISOString(),
         company,
@@ -136,8 +136,21 @@ export function analyzeJD(company, role, jdText) {
         plan,
         checklist,
         questions,
-        readinessScore
+        baseReadinessScore: readinessScore,
+        readinessScore: readinessScore, // dynamic score starts at base
+        skillConfidenceMap: {} // Starts empty, default is "practice"
     };
+
+    return result;
+}
+
+export function updateAnalysis(updated) {
+    const history = getHistory();
+    const index = history.findIndex(a => a.id === updated.id);
+    if (index !== -1) {
+        history[index] = updated;
+        localStorage.setItem('analysis_history', JSON.stringify(history));
+    }
 }
 
 export function saveToHistory(analysis) {
