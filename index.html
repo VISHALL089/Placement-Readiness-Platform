@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KodNest Premium Build System</title>
+  
+  <!-- Typography Dependencies -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+  <div class="app-container">
+    
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <div class="project-name">KodNest Premium</div>
+      <div class="progress-indicator">Step 1 / 10</div>
+      <div class="status-badge">In Progress</div>
+    </header>
+
+    <!-- Context Header -->
+    <section class="context-header">
+      <h1>Design System Initialization</h1>
+      <p class="subtext">Setting up the foundational layout and typography for Vishal's Job Portal.</p>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      
+      <!-- Primary Workspace (70% width) -->
+      <section class="primary-workspace">
+        <div class="card">
+          <h2>Welcome to the Workspace</h2>
+          <p>This is where the main product interaction happens. Clean cards, predictable components, no crowding.</p>
+          
+          <div class="form-group">
+            <label for="exampleInput">Feature Name</label>
+            <input type="text" id="exampleInput" placeholder="e.g. Authentication Module">
+          </div>
+          
+          <button class="btn btn-primary">Save Changes</button>
+          <button class="btn btn-secondary">Cancel</button>
+        </div>
+
+        <div class="card state-message state-error">
+          <h3>Build Error Detected</h3>
+          <p>The components failed to compile because of a missing dependency in package.json.</p>
+          <button class="btn btn-secondary" style="margin-top: var(--spacing-2);">Run npm install</button>
+        </div>
+
+        <div class="card state-message state-empty">
+          <h3>No Pending Tasks</h3>
+          <p>You have completed all objectives for this module. Ready to move to the next step.</p>
+          <button class="btn btn-primary" style="margin-top: var(--spacing-2);">Continue to Step 2</button>
+        </div>
+      </section>
+
+      <!-- Secondary Panel (30% width) -->
+      <aside class="secondary-panel">
+        <div class="card">
+          <h3>Prompts</h3>
+          <p style="font-size: 0.9rem; margin-bottom: var(--spacing-2);">Copy to Lovable:</p>
+          <div class="prompt-box">Create a login form using the KodNest premium UI kit.</div>
+          
+          <div class="btn-group">
+            <button class="btn btn-secondary">Copy Prompt</button>
+            <button class="btn btn-secondary">Build in Lovable</button>
+            <button class="btn btn-primary">It Worked</button>
+            <button class="btn btn-secondary">Error</button>
+            <button class="btn btn-secondary">Add Screenshot</button>
+          </div>
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- Proof Footer -->
+    <footer class="proof-footer">
+      <div class="checklist-flex">
+        <div class="checklist-item">
+          <input type="checkbox" id="proof-ui">
+          <div class="checklist-item-content">
+            <label for="proof-ui">UI Built</label>
+            <input type="text" class="proof-input" placeholder="Paste Lovable link">
+          </div>
+        </div>
+        
+        <div class="checklist-item">
+          <input type="checkbox" id="proof-logic">
+          <div class="checklist-item-content">
+            <label for="proof-logic">Logic Working</label>
+            <input type="text" class="proof-input" placeholder="Note on logic">
+          </div>
+        </div>
+        
+        <div class="checklist-item">
+          <input type="checkbox" id="proof-test">
+          <div class="checklist-item-content">
+            <label for="proof-test">Test Passed</label>
+            <input type="text" class="proof-input" placeholder="Test log summary">
+          </div>
+        </div>
+
+        <div class="checklist-item">
+          <input type="checkbox" id="proof-deploy">
+          <div class="checklist-item-content">
+            <label for="proof-deploy">Deployed</label>
+            <input type="text" class="proof-input" placeholder="Live URL">
+          </div>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+</body>
+</html>
