@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import {
     Radar,
@@ -8,7 +8,9 @@ import {
     PolarRadiusAxis,
     ResponsiveContainer
 } from 'recharts';
-import { Calendar, PlayCircle } from 'lucide-react';
+import { Calendar, PlayCircle, Send, PlusCircle, ArrowRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { getHistory } from '../lib/analyzer';
 
 const mockSkillData = [
     { subject: 'DSA', A: 75, fullMark: 100 },
@@ -19,176 +21,157 @@ const mockSkillData = [
 ];
 
 export default function Dashboard() {
-    const readinessScore = 72;
+    const [history, setHistory] = useState([]);
+
+    useEffect(() => {
+        setHistory(getHistory().slice(0, 3));
+    }, []);
+
+    const readinessScore = history[0]?.readinessScore || 72;
     const circumference = 2 * Math.PI * 45; // r=45
     const strokeDashoffset = circumference - (readinessScore / 100) * circumference;
 
     return (
-        <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Dashboard Overview</h2>
+        <div className="space-y-8">
+            <div className="flex justify-between items-end">
+                <div>
+                    <h2 className="text-3xl font-bold text-gray-900">Welcome back, User</h2>
+                    <p className="text-gray-500">Here's your placement readiness overview.</p>
+                </div>
+                <Link to="/dashboard/analyzer" className="hidden md:flex items-center gap-2 px-6 py-3 bg-primary-500 text-white rounded-xl font-bold hover:bg-primary-600 transition-all shadow-lg shadow-primary-500/25">
+                    <PlusCircle className="w-5 h-5" /> Analyze New JD
+                </Link>
+            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-                {/* Overall Readiness */}
-                <Card className="flex flex-col justify-center items-center">
-                    <CardHeader>
-                        <CardTitle className="text-center text-lg text-gray-700">Overall Readiness</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-col items-center pb-8">
-                        <div className="relative w-40 h-40 flex items-center justify-center">
-                            {/* Background Circle */}
-                            <svg className="w-full h-full transform -rotate-90">
-                                <circle
-                                    cx="80"
-                                    cy="80"
-                                    r="45"
-                                    stroke="currentColor"
-                                    strokeWidth="8"
-                                    fill="transparent"
-                                    className="text-gray-100"
-                                />
-                                {/* Progress Circle */}
-                                <circle
-                                    cx="80"
-                                    cy="80"
-                                    r="45"
-                                    stroke="currentColor"
-                                    strokeWidth="8"
-                                    fill="transparent"
-                                    strokeDasharray={circumference}
-                                    strokeDashoffset={strokeDashoffset}
-                                    className="text-primary-500 transition-all duration-1000 ease-out"
-                                    strokeLinecap="round"
-                                />
-                            </svg>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                <span className="text-4xl font-bold text-gray-800">{readinessScore}</span>
-                                <span className="text-sm text-gray-500">/100</span>
-                            </div>
-                        </div>
-                        <p className="mt-4 font-medium text-gray-600">Readiness Score</p>
-                    </CardContent>
-                </Card>
-
-                {/* Skill Breakdown */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg text-gray-700">Skill Breakdown</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="h-64 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <RadarChart cx="50%" cy="50%" outerRadius="80%" data={mockSkillData}>
-                                    <PolarGrid stroke="#e5e7eb" />
-                                    <PolarAngleAxis dataKey="subject" tick={{ fill: '#4b5563', fontSize: 12 }} />
-                                    <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                                    <Radar
-                                        name="Student"
-                                        dataKey="A"
-                                        stroke="hsl(245, 58%, 51%)"
-                                        fill="hsl(245, 58%, 51%)"
-                                        fillOpacity={0.6}
-                                    />
-                                </RadarChart>
-                            </ResponsiveContainer>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Continue Practice */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-lg text-gray-700">Continue Practice</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="bg-gray-50 rounded-lg p-5 border border-gray-100">
-                            <div className="flex justify-between items-start mb-4">
-                                <div>
-                                    <h4 className="font-semibold text-gray-800 text-lg">Dynamic Programming</h4>
-                                    <p className="text-sm text-gray-500 mt-1">3/10 completed</p>
+                {/* Main Stats Column */}
+                <div className="lg:col-span-2 space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Overall Readiness */}
+                        <Card className="flex flex-col justify-center items-center border-none shadow-xl shadow-gray-200/50">
+                            <CardHeader>
+                                <CardTitle className="text-center text-lg text-gray-700">Latest Readiness</CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex flex-col items-center pb-8">
+                                <div className="relative w-40 h-40 flex items-center justify-center">
+                                    <svg className="w-full h-full transform -rotate-90">
+                                        <circle cx="80" cy="80" r="45" stroke="currentColor" strokeWidth="8" fill="transparent" className="text-gray-100" />
+                                        <circle
+                                            cx="80" cy="80" r="45" stroke="currentColor" strokeWidth="8" fill="transparent"
+                                            strokeDasharray={circumference}
+                                            strokeDashoffset={strokeDashoffset}
+                                            className="text-primary-500 transition-all duration-1000 ease-out"
+                                            strokeLinecap="round"
+                                        />
+                                    </svg>
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span className="text-4xl font-bold text-gray-800">{readinessScore}</span>
+                                        <span className="text-sm text-gray-500">/100</span>
+                                    </div>
                                 </div>
-                                <div className="bg-primary-50 w-10 h-10 rounded-full flex items-center justify-center text-primary-500">
-                                    <PlayCircle className="w-5 h-5" />
+                                <p className="mt-4 font-medium text-gray-600 truncate max-w-[200px]">
+                                    {history[0] ? `${history[0].company} - ${history[0].role}` : 'Overall Score'}
+                                </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Skill Breakdown */}
+                        <Card className="border-none shadow-xl shadow-gray-200/50">
+                            <CardHeader>
+                                <CardTitle className="text-lg text-gray-700">Skill Breakdown</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="h-64 w-full">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <RadarChart cx="50%" cy="50%" outerRadius="80%" data={mockSkillData}>
+                                            <PolarGrid stroke="#e5e7eb" />
+                                            <PolarAngleAxis dataKey="subject" tick={{ fill: '#4b5563', fontSize: 12 }} />
+                                            <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                                            <Radar
+                                                name="Student"
+                                                dataKey="A"
+                                                stroke="hsl(245, 58%, 51%)"
+                                                fill="hsl(245, 58%, 51%)"
+                                                fillOpacity={0.6}
+                                            />
+                                        </RadarChart>
+                                    </ResponsiveContainer>
                                 </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Quick Analysis CTA */}
+                    <Card className="bg-primary-500 border-none relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 group-hover:scale-110 transition-transform duration-700"></div>
+                        <CardContent className="p-10 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                            <div className="text-center md:text-left">
+                                <h3 className="text-2xl font-bold text-white mb-2">Ready for your next interview?</h3>
+                                <p className="text-primary-100">Upload a JD and get a personalized 7-day preparation roadmap in seconds.</p>
                             </div>
+                            <Link to="/dashboard/analyzer" className="px-8 py-4 bg-white text-primary-500 rounded-xl font-bold whitespace-nowrap hover:bg-gray-50 transition-colors flex items-center gap-2 group">
+                                Start Analyzing <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </Link>
+                        </CardContent>
+                    </Card>
+                </div>
 
-                            <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
-                                <div className="bg-primary-500 h-2 rounded-full" style={{ width: '30%' }}></div>
-                            </div>
-
-                            <button className="w-full py-2.5 bg-primary-500 text-white rounded-lg font-medium hover:bg-primary-600 transition-colors">
-                                Continue
-                            </button>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Weekly Goals & Upcoming Assessments */}
-                <div className="space-y-6">
-
-                    {/* Weekly Goals */}
-                    <Card>
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-lg text-gray-700">Weekly Goals</CardTitle>
+                {/* Sidebar Column: Recent History */}
+                <div className="space-y-8">
+                    <Card className="border-none shadow-xl shadow-gray-200/50">
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <CardTitle className="text-lg text-gray-700">Recent History</CardTitle>
+                            <Link to="/dashboard/history" className="text-sm text-primary-500 font-medium hover:underline">View All</Link>
                         </CardHeader>
                         <CardContent>
-                            <div className="mb-4">
-                                <div className="flex justify-between text-sm mb-2">
-                                    <span className="font-medium text-gray-700">Problems Solved</span>
-                                    <span className="text-gray-500">12/20 this week</span>
+                            {history.length === 0 ? (
+                                <div className="text-center py-10">
+                                    <p className="text-gray-400 text-sm">No recent analyses.</p>
                                 </div>
-                                <div className="w-full bg-gray-200 rounded-full h-2">
-                                    <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '60%' }}></div>
-                                </div>
-                            </div>
-
-                            <div className="flex justify-between mt-6 px-2">
-                                {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
-                                    <div key={i} className="flex flex-col items-center gap-2">
-                                        <span className="text-xs text-gray-400 font-medium">{day}</span>
-                                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs 
-                      ${[0, 1, 3].includes(i) ? 'bg-primary-500 text-white' : 'bg-gray-100 text-transparent'}`}
-                                        >
-                                            ✓
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
+                            ) : (
+                                <ul className="space-y-4">
+                                    {history.map((item) => (
+                                        <li key={item.id}>
+                                            <Link to={`/results/${item.id}`} className="flex items-start gap-4 p-3 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all group">
+                                                <div className="w-10 h-10 rounded-lg bg-primary-50 text-primary-500 flex items-center justify-center font-bold text-xs">
+                                                    {item.readinessScore}
+                                                </div>
+                                                <div className="flex-1 min-w-0">
+                                                    <h4 className="font-semibold text-gray-900 truncate group-hover:text-primary-600 transition-colors">{item.company}</h4>
+                                                    <p className="text-xs text-gray-500 truncate">{item.role}</p>
+                                                </div>
+                                                <Calendar className="w-4 h-4 text-gray-300 mt-1" />
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
                         </CardContent>
                     </Card>
 
-                    {/* Upcoming Assessments */}
-                    <Card>
-                        <CardHeader className="pb-3">
-                            <CardTitle className="text-lg text-gray-700">Upcoming Assessments</CardTitle>
+                    <Card className="border-none shadow-xl shadow-gray-200/50">
+                        <CardHeader>
+                            <CardTitle className="text-lg text-gray-700">Upcoming Mock Tests</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <ul className="space-y-4">
-                                <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                    <div className="bg-orange-100 text-orange-600 p-2 rounded-md mt-0.5">
+                                <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                    <div className="bg-orange-100 text-orange-600 p-2 rounded-lg mt-0.5">
                                         <Calendar className="w-4 h-4" />
                                     </div>
                                     <div>
                                         <h4 className="font-medium text-gray-800">DSA Mock Test</h4>
-                                        <p className="text-sm text-gray-500">Tomorrow, 10:00 AM</p>
+                                        <p className="text-xs text-gray-500">Tomorrow, 10:00 AM</p>
                                     </div>
                                 </li>
-                                <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                    <div className="bg-blue-100 text-blue-600 p-2 rounded-md mt-0.5">
+                                <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                    <div className="bg-blue-100 text-blue-600 p-2 rounded-lg mt-0.5">
                                         <Calendar className="w-4 h-4" />
                                     </div>
                                     <div>
                                         <h4 className="font-medium text-gray-800">System Design Review</h4>
-                                        <p className="text-sm text-gray-500">Wed, 2:00 PM</p>
-                                    </div>
-                                </li>
-                                <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                                    <div className="bg-purple-100 text-purple-600 p-2 rounded-md mt-0.5">
-                                        <Calendar className="w-4 h-4" />
-                                    </div>
-                                    <div>
-                                        <h4 className="font-medium text-gray-800">HR Interview Prep</h4>
-                                        <p className="text-sm text-gray-500">Friday, 11:00 AM</p>
+                                        <p className="text-xs text-gray-500">Wed, 2:00 PM</p>
                                     </div>
                                 </li>
                             </ul>
@@ -200,3 +183,4 @@ export default function Dashboard() {
         </div>
     );
 }
+
