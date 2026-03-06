@@ -8,7 +8,7 @@ import {
     PolarRadiusAxis,
     ResponsiveContainer
 } from 'recharts';
-import { Calendar, PlayCircle, Send, PlusCircle, ArrowRight } from 'lucide-react';
+import { Calendar, PlayCircle, Send, PlusCircle, ArrowRight, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getHistory } from '../lib/analyzer';
 
@@ -22,12 +22,16 @@ const mockSkillData = [
 
 export default function Dashboard() {
     const [history, setHistory] = useState([]);
+    const [showWarning, setShowWarning] = useState(false);
 
     useEffect(() => {
         setHistory(getHistory().slice(0, 3));
+        if (sessionStorage.getItem('history_corrupted') === 'true') {
+            setShowWarning(true);
+        }
     }, []);
 
-    const readinessScore = history[0]?.readinessScore || 72;
+    const readinessScore = history[0]?.finalScore || 72;
     const circumference = 2 * Math.PI * 45; // r=45
     const strokeDashoffset = circumference - (readinessScore / 100) * circumference;
 
@@ -42,6 +46,24 @@ export default function Dashboard() {
                     <PlusCircle className="w-5 h-5" /> Analyze New JD
                 </Link>
             </div>
+
+            {showWarning && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-700 px-6 py-4 rounded-2xl flex items-center justify-between shadow-sm">
+                    <div className="flex items-center gap-3">
+                        <AlertCircle className="w-5 h-5" />
+                        <p className="text-sm font-medium">One saved entry couldn't be loaded. Create a new analysis.</p>
+                    </div>
+                    <button
+                        onClick={() => {
+                            setShowWarning(false);
+                            sessionStorage.removeItem('history_corrupted');
+                        }}
+                        className="text-amber-900/50 hover:text-amber-900 font-bold"
+                    >
+                        Dismiss
+                    </button>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -135,7 +157,7 @@ export default function Dashboard() {
                                         <li key={item.id}>
                                             <Link to={`/results/${item.id}`} className="flex items-start gap-4 p-3 rounded-xl hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all group">
                                                 <div className="w-10 h-10 rounded-lg bg-primary-50 text-primary-500 flex items-center justify-center font-bold text-xs">
-                                                    {item.readinessScore}
+                                                    {item.finalScore}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <h4 className="font-semibold text-gray-900 truncate group-hover:text-primary-600 transition-colors">{item.company}</h4>

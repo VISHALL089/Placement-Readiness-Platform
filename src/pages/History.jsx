@@ -2,13 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { getHistory } from '../lib/analyzer';
-import { Building2, Calendar, ChevronRight, Briefcase } from 'lucide-react';
+import { Building2, Calendar, ChevronRight, Briefcase, AlertCircle } from 'lucide-react';
 
 export default function History() {
     const [history, setHistory] = useState([]);
+    const [showWarning, setShowWarning] = useState(false);
 
     useEffect(() => {
         setHistory(getHistory());
+        if (sessionStorage.getItem('history_corrupted') === 'true') {
+            setShowWarning(true);
+        }
     }, []);
 
     return (
@@ -22,6 +26,24 @@ export default function History() {
                     New Analysis
                 </Link>
             </div>
+
+            {showWarning && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-700 px-6 py-4 rounded-2xl flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <AlertCircle className="w-5 h-5" />
+                        <p className="text-sm font-medium">One saved entry couldn't be loaded. Create a new analysis.</p>
+                    </div>
+                    <button
+                        onClick={() => {
+                            setShowWarning(false);
+                            sessionStorage.removeItem('history_corrupted');
+                        }}
+                        className="text-amber-900/50 hover:text-amber-900 font-bold"
+                    >
+                        Dismiss
+                    </button>
+                </div>
+            )}
 
             {history.length === 0 ? (
                 <Card className="text-center py-20 pointer-events-none">
@@ -40,11 +62,11 @@ export default function History() {
                             <Card className="hover:border-primary-300 hover:shadow-lg transition-all cursor-pointer group">
                                 <CardContent className="p-6 flex items-center justify-between">
                                     <div className="flex gap-6 items-center">
-                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-xl ${item.readinessScore > 80 ? 'bg-green-50 text-green-600' :
-                                                item.readinessScore > 50 ? 'bg-primary-50 text-primary-500' :
-                                                    'bg-orange-50 text-orange-500'
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-xl ${item.finalScore > 80 ? 'bg-green-50 text-green-600' :
+                                            item.finalScore > 50 ? 'bg-primary-50 text-primary-500' :
+                                                'bg-orange-50 text-orange-500'
                                             }`}>
-                                            {item.readinessScore}
+                                            {item.finalScore}
                                         </div>
                                         <div className="space-y-1">
                                             <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary-600 transition-colors flex items-center gap-2">

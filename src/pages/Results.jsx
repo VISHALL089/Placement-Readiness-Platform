@@ -33,7 +33,10 @@ export default function Results() {
             const fixed = {
                 ...result,
                 skillConfidenceMap: result.skillConfidenceMap || {},
-                baseReadinessScore: result.baseReadinessScore || result.readinessScore
+                baseScore: result.baseScore || result.readinessScore || 70,
+                finalScore: result.finalScore || result.readinessScore || 70,
+                plan7Days: result.plan7Days || result.plan || [],
+                roundMapping: result.roundMapping || []
             };
             setData(fixed);
         }
@@ -47,22 +50,21 @@ export default function Results() {
 
         const newMap = { ...data.skillConfidenceMap, [skill]: next };
 
-        // Calculate new score: base + (know * 2) - (practice * 2)
-        // Actually, let's keep it simple: baseline is already set. 
-        // For each skill in the entire list:
+        // Score stability rule: finalScore changes only based on skillConfidenceMap
         const allSkills = Object.values(data.extractedSkills).flat();
         let adjustment = 0;
         allSkills.forEach(s => {
             const state = newMap[s] || 'practice';
-            adjustment += state === 'know' ? 2 : -2;
+            // Each "know" skill adds 2 points (max 100), baseline is baseScore
+            if (state === 'know') adjustment += 2;
         });
 
-        const newScore = Math.min(Math.max(data.baseReadinessScore + adjustment, 0), 100);
+        const newScore = Math.min(Math.max(data.baseScore + adjustment, 0), 100);
 
         const updated = {
             ...data,
             skillConfidenceMap: newMap,
-            readinessScore: newScore
+            finalScore: newScore
         };
 
         setData(updated);
@@ -79,13 +81,13 @@ export default function Results() {
         const content = `
 ANALYSIS REPORT: ${data.company} - ${data.role}
 Date: ${new Date(data.createdAt).toLocaleDateString()}
-Readiness Score: ${data.readinessScore}%
+Readiness Score: ${data.finalScore}%
 
 7-DAY PLAN:
-${data.plan.map(p => `${p.day}: ${p.task} - ${p.detail}`).join('\n')}
+${data.plan7Days.map(p => `${p.day}: ${p.focus} - ${p.tasks.join(', ')}`).join('\n')}
 
 ROUND-WISE CHECKLIST:
-${data.checklist.map(r => `${r.round}:\n${r.items.map(i => `- ${i}`).join('\n')}`).join('\n\n')}
+${data.checklist.map(r => `${r.roundTitle}:\n${r.items.map(i => `- ${i}`).join('\n')}`).join('\n\n')}
 
 PRACTICE QUESTIONS:
 ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
@@ -103,7 +105,7 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
     const weakSkills = allSkills.filter(s => (data.skillConfidenceMap[s] || 'practice') === 'practice').slice(0, 3);
 
     const circumference = 2 * Math.PI * 45;
-    const strokeDashoffset = circumference - (data.readinessScore / 100) * circumference;
+    const strokeDashoffset = circumference - (data.finalScore / 100) * circumference;
 
     return (
         <div className="max-w-6xl mx-auto space-y-8 pb-20">
@@ -121,7 +123,7 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                     </button>
                     <div className="h-6 w-px bg-gray-200 mx-1 hidden sm:block"></div>
                     <button
-                        onClick={() => copyToClipboard(data.plan.map(p => `${p.day}: ${p.task}`).join('\n'), 'plan')}
+                        onClick={() => copyToClipboard(data.plan7Days.map(p => `${p.day}: ${p.focus}`).join('\n'), 'plan')}
                         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all shadow-sm"
                     >
                         {copied === 'plan' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />} Plan
@@ -152,19 +154,19 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                                     <circle
                                         cx="88" cy="88" r="45" stroke="white" strokeWidth="10" fill="transparent"
                                         strokeDasharray={2 * Math.PI * 45}
-                                        strokeDashoffset={2 * Math.PI * 45 - (data.readinessScore / 100) * (2 * Math.PI * 45)}
+                                        strokeDashoffset={2 * Math.PI * 45 - (data.finalScore / 100) * (2 * Math.PI * 45)}
                                         strokeLinecap="round"
                                         className="transition-all duration-1000 ease-in-out"
                                     />
                                 </svg>
                                 <div className="absolute inset-0 flex flex-col items-center justify-center translate-y-2">
-                                    <span className="text-6xl font-black">{Math.round(data.readinessScore)}</span>
+                                    <span className="text-6xl font-black">{Math.round(data.finalScore)}</span>
                                     <span className="text-xs opacity-60 font-bold uppercase tracking-tighter">Current Score</span>
                                 </div>
                             </div>
                             <div className="mt-8 text-center space-y-1">
-                                <h3 className="text-2xl font-black tracking-tight">{data.company}</h3>
-                                <p className="opacity-70 font-medium">{data.role}</p>
+                                <h3 className="text-2xl font-black tracking-tight">{data.company || "General Role"}</h3>
+                                <p className="opacity-70 font-medium">{data.role || "JD Analysis"}</p>
                             </div>
                         </CardContent>
                     </Card>
@@ -193,7 +195,7 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                                     <p className="text-[10px] text-primary-400 font-black uppercase mb-1">Hiring Focus</p>
                                     <p className="text-xs text-gray-300 leading-relaxed font-medium">{data.companyIntel.hiringFocus}</p>
                                 </div>
-                                <p className="text-[10px] text-gray-600 italic">Demo Mode: Company intel generated heuristically.</p>
+                                <p className="text-[10px] text-gray-600 italic tracking-tighter">Company intel generated heuristically.</p>
                             </CardContent>
                         </Card>
                     )}
@@ -207,29 +209,31 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                         </CardHeader>
                         <CardContent className="space-y-6 pt-4">
                             {Object.entries(data.extractedSkills).map(([cat, skills]) => (
-                                <div key={cat} className="space-y-3">
-                                    <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[2px]">{cat}</h4>
-                                    <div className="flex flex-wrap gap-2">
-                                        {skills.map(s => {
-                                            const isKnown = data.skillConfidenceMap[s] === 'know';
-                                            return (
-                                                <button
-                                                    key={s}
-                                                    onClick={() => toggleSkill(s)}
-                                                    className={cn(
-                                                        "px-3 py-1.5 rounded-xl text-xs font-bold transition-all border flex items-center gap-1.5",
-                                                        isKnown
-                                                            ? "bg-emerald-50 border-emerald-100 text-emerald-700 shadow-sm"
-                                                            : "bg-white border-gray-100 text-gray-500 hover:border-primary-200 hover:text-primary-600"
-                                                    )}
-                                                >
-                                                    {isKnown ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3 opacity-40" />}
-                                                    {s}
-                                                </button>
-                                            );
-                                        })}
+                                skills.length > 0 && (
+                                    <div key={cat} className="space-y-3">
+                                        <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[2px]">{cat}</h4>
+                                        <div className="flex flex-wrap gap-2">
+                                            {skills.map(s => {
+                                                const isKnown = data.skillConfidenceMap[s] === 'know';
+                                                return (
+                                                    <button
+                                                        key={s}
+                                                        onClick={() => toggleSkill(s)}
+                                                        className={cn(
+                                                            "px-3 py-1.5 rounded-xl text-xs font-bold transition-all border flex items-center gap-1.5",
+                                                            isKnown
+                                                                ? "bg-emerald-50 border-emerald-100 text-emerald-700 shadow-sm"
+                                                                : "bg-white border-gray-100 text-gray-500 hover:border-primary-200 hover:text-primary-600"
+                                                        )}
+                                                    >
+                                                        {isKnown ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3 opacity-40" />}
+                                                        {s}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
-                                </div>
+                                )
                             ))}
                         </CardContent>
                     </Card>
@@ -246,18 +250,21 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                         </CardHeader>
                         <CardContent className="p-0">
                             <div className="divide-y divide-gray-100">
-                                {data.plan.map((p, i) => (
+                                {data.plan7Days.map((p, i) => (
                                     <div key={i} className="flex gap-6 p-6 hover:bg-primary-50/30 transition-colors group">
-                                        <div className="flex flex-col items-center w-16">
-                                            <span className="text-[10px] font-black text-primary-400 uppercase tracking-widest leading-none mb-1">Day</span>
-                                            <span className="text-2xl font-black text-primary-600 leading-none">{p.day.match(/\d+/)[0]}</span>
+                                        <div className="flex flex-col items-center w-24 shrink-0">
+                                            <span className="text-[10px] font-black text-primary-400 uppercase tracking-widest leading-none mb-1 text-center">{p.day}</span>
+                                            <span className="text-xs font-bold text-primary-600 text-center">{p.focus}</span>
                                         </div>
                                         <div className="flex-1">
-                                            <h4 className="font-bold text-gray-900 mb-1 flex items-center gap-2">
-                                                {p.task}
-                                                <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all text-primary-400" />
-                                            </h4>
-                                            <p className="text-sm text-gray-500 leading-relaxed italic">"{p.detail}"</p>
+                                            <div className="space-y-2">
+                                                {p.tasks.map((task, j) => (
+                                                    <div key={j} className="flex items-start gap-2 group">
+                                                        <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary-300" />
+                                                        <p className="text-sm text-gray-700 font-medium leading-relaxed">{task}</p>
+                                                    </div>
+                                                ))}
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -268,7 +275,7 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                     <Card className="border-none shadow-xl shadow-gray-200/50">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 font-bold text-gray-800">
-                                <Lightbulb className="w-5 h-5 text-orange-400" /> Top 10 Targeted Prep Qs
+                                <Lightbulb className="w-5 h-5 text-orange-400" /> Top Targeted Prep Qs
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -290,27 +297,21 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                                 <CardTitle className="flex items-center gap-2 font-bold text-gray-800">
                                     <GitBranch className="w-5 h-5 text-primary-500" /> Interview Round Flow
                                 </CardTitle>
-                                <p className="text-xs text-gray-400 font-medium">Predicted based on company size and skill requirements.</p>
                             </CardHeader>
                             <CardContent className="pt-2 pb-10">
-                                <div className="space-y-0 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-100 before:to-transparent">
+                                <div className="space-y-6">
                                     {data.roundMapping.map((round, i) => (
-                                        <div key={i} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                                            {/* Dot */}
-                                            <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-primary-500 text-white shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10 font-bold text-sm">
+                                        <div key={i} className="flex gap-4 items-start">
+                                            <div className="w-10 h-10 rounded-full bg-primary-500 text-white flex items-center justify-center font-bold shrink-0">
                                                 {i + 1}
                                             </div>
-                                            {/* Card */}
-                                            <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] p-4 rounded-2xl bg-gray-50 border border-gray-100 group-hover:bg-white group-hover:border-primary-200 group-hover:shadow-md transition-all">
-                                                <div className="flex items-center justify-between mb-1">
-                                                    <h4 className="font-black text-gray-900 leading-tight">{round.round}</h4>
-                                                    <span className="text-[10px] font-black uppercase text-primary-500 bg-primary-50 px-2 py-0.5 rounded-full">{round.type}</span>
-                                                </div>
-                                                <p className="text-xs text-primary-600 font-bold italic mb-3">"{round.why}"</p>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {round.items.map((item, j) => (
-                                                        <span key={j} className="text-[10px] bg-white border border-gray-100 px-2 py-1 rounded-md text-gray-600 font-medium">
-                                                            {item}
+                                            <div className="flex-1 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                                <h4 className="font-bold text-gray-900">{round.roundTitle}</h4>
+                                                <p className="text-xs text-primary-600 font-bold italic mt-1 pb-2 border-b border-gray-100">"{round.whyItMatters}"</p>
+                                                <div className="flex flex-wrap gap-2 mt-3">
+                                                    {round.focusAreas.map((area, j) => (
+                                                        <span key={j} className="text-[10px] bg-white border border-gray-200 px-2 py-1 rounded-md text-gray-600 font-black uppercase">
+                                                            {area}
                                                         </span>
                                                     ))}
                                                 </div>
@@ -332,7 +333,7 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
                                 {data.checklist.map((round, i) => (
                                     <div key={i} className="space-y-3">
-                                        <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">{round.round}</h4>
+                                        <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest border-b border-gray-100 pb-2">{round.roundTitle}</h4>
                                         <div className="space-y-2">
                                             {round.items.map((item, j) => (
                                                 <div key={j} className="flex items-center gap-3 text-sm text-gray-600 group">
@@ -355,7 +356,6 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
             <div className="sticky bottom-8 left-0 right-0 z-30">
                 <div className="max-w-4xl mx-auto px-4">
                     <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
-                        {/* Decorative pattern */}
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
 
                         <div className="flex items-center gap-6 relative z-10">
@@ -382,10 +382,6 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                         </div>
 
                         <div className="flex items-center gap-4 relative z-10 w-full md:w-auto">
-                            <div className="hidden lg:block text-right mr-2">
-                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Recommendation</p>
-                                <p className="text-sm text-gray-300 font-bold italic">"Start Day 1 plan now."</p>
-                            </div>
                             <button
                                 onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })}
                                 className="flex-1 md:flex-none px-8 py-3 bg-primary-500 text-white font-bold rounded-xl hover:bg-primary-600 transition-all shadow-lg shadow-primary-500/20 hover:-translate-y-0.5"

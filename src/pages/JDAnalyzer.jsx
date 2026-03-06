@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '../components/ui/card';
 import { analyzeJD, saveToHistory } from '../lib/analyzer';
-import { Send, FileText, Building2, Briefcase } from 'lucide-react';
+import { Send, FileText, Building2, Briefcase, AlertCircle } from 'lucide-react';
 
 export default function JDAnalyzer() {
     const [company, setCompany] = useState('');
@@ -46,11 +46,10 @@ export default function JDAnalyzer() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                    <Building2 className="w-4 h-4" /> Company Name
+                                    <Building2 className="w-4 h-4" /> Company Name (Optional)
                                 </label>
                                 <input
                                     type="text"
-                                    required
                                     placeholder="e.g. Google, Microsoft"
                                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                                     value={company}
@@ -59,11 +58,10 @@ export default function JDAnalyzer() {
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-                                    <Briefcase className="w-4 h-4" /> Role Position
+                                    <Briefcase className="w-4 h-4" /> Role Position (Optional)
                                 </label>
                                 <input
                                     type="text"
-                                    required
                                     placeholder="e.g. Software Engineer, Frontend Intern"
                                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
                                     value={role}
@@ -73,7 +71,14 @@ export default function JDAnalyzer() {
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-sm font-semibold text-gray-700">Job Description</label>
+                            <label className="text-sm font-semibold text-gray-700 flex items-center justify-between">
+                                Job Description (Required)
+                                {jdText.length > 0 && jdText.length < 200 && (
+                                    <span className="text-[10px] bg-amber-50 text-amber-600 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                                        <AlertCircle className="w-3 h-3" /> Too short for deep analysis
+                                    </span>
+                                )}
+                            </label>
                             <textarea
                                 required
                                 placeholder="Paste the full job description here..."
@@ -81,7 +86,14 @@ export default function JDAnalyzer() {
                                 value={jdText}
                                 onChange={(e) => setJdText(e.target.value)}
                             />
-                            <p className="text-xs text-gray-400">Length: {jdText.length} characters (Bonus score if &gt; 800)</p>
+                            <div className="flex items-center justify-between mt-1">
+                                <p className="text-xs text-gray-400">Length: {jdText.length} characters</p>
+                                {jdText.length > 0 && jdText.length < 200 && (
+                                    <p className="text-[10px] text-amber-500 font-medium italic">
+                                        This JD is too short to analyze deeply. Paste full JD for better output.
+                                    </p>
+                                )}
+                            </div>
                         </div>
 
                         <button
