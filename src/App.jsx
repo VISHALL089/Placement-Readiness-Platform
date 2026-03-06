@@ -9,6 +9,7 @@ import Resources from './pages/Resources';
 import Profile from './pages/Profile';
 import TestChecklist from './pages/TestChecklist';
 import Ship from './pages/Ship';
+import Proof from './pages/Proof';
 
 function App() {
     return (
@@ -27,6 +28,7 @@ function App() {
                 </Route>
                 <Route path="/prp/07-test" element={<TestChecklist />} />
                 <Route path="/prp/08-ship" element={<Ship />} />
+                <Route path="/prp/proof" element={<Proof />} />
             </Routes>
         </BrowserRouter>
     );
