@@ -28,10 +28,10 @@ export default function Landing() {
             <header className="py-4 px-6 md:px-12 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 shadow-sm z-50">
                 <div className="text-2xl font-black text-primary-500 tracking-tighter">Placement<span className="text-gray-900">Prep</span></div>
                 <nav className="gap-8 hidden md:flex items-center">
-                    <Link to="/features" className="text-gray-600 hover:text-gray-900 font-bold transition-colors">Features</Link>
-                    <Link to="/dashboard/history" className="text-gray-600 hover:text-gray-900 font-bold transition-colors">History</Link>
-                    <Link to="/dashboard" className="px-5 py-2.5 bg-gray-900 text-white rounded-xl font-bold hover:bg-black transition-all">
-                        Dashboard
+                    <Link to="/features" className="text-gray-600 hover:text-primary-500 font-bold transition-colors">Features</Link>
+                    <Link to="/dashboard/history" className="text-gray-600 hover:text-primary-500 font-bold transition-colors">History</Link>
+                    <Link to="/dashboard" className="px-5 py-2.5 bg-primary-500 text-white rounded-xl font-bold hover:bg-primary-600 transition-all">
+                        Get Started
                     </Link>
                 </nav>
             </header>
@@ -51,12 +51,23 @@ export default function Landing() {
                                 Now powered by local AI analysis
                             </div>
                             <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tight leading-[1.1]">
-                                Ace your next <br />
-                                <span className="text-primary-500">Interview.</span>
+                                Ace Your <br />
+                                <span className="text-primary-500">Placement.</span>
                             </h1>
                             <p className="text-xl text-gray-600 leading-relaxed max-w-lg">
                                 Paste your target JD and get a 7-day preparation roadmap, targeted questions, and skill gap analysis instantly.
                             </p>
+                            <div className="flex flex-wrap gap-4">
+                                <button
+                                    onClick={() => document.getElementById('analyzer-form').scrollIntoView({ behavior: 'smooth' })}
+                                    className="px-8 py-4 bg-primary-500 text-white rounded-2xl font-black text-lg hover:bg-primary-600 shadow-xl shadow-primary-500/30 hover:-translate-y-1 transition-all"
+                                >
+                                    Get Started
+                                </button>
+                                <Link to="/dashboard" className="px-8 py-4 bg-white text-gray-900 border-2 border-gray-100 rounded-2xl font-black text-lg hover:border-primary-500 hover:text-primary-500 transition-all">
+                                    View Dashboard
+                                </Link>
+                            </div>
                             <div className="flex items-center gap-6">
                                 <div className="flex -space-x-3">
                                     {[1, 2, 3, 4].map(i => (
@@ -71,7 +82,7 @@ export default function Landing() {
 
                         <div className="lg:w-1/2 w-full">
                             <div className="bg-white p-8 rounded-[32px] shadow-2xl shadow-primary-500/10 border border-white relative">
-                                <form onSubmit={handleAnalyze} className="space-y-6">
+                                <form id="analyzer-form" onSubmit={handleAnalyze} className="space-y-6">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black uppercase text-gray-400 tracking-widest flex items-center gap-2">
@@ -158,7 +169,7 @@ export default function Landing() {
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
 
                             <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-14 h-14 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-6">
+                                <div className="w-14 h-14 bg-primary-50 text-primary-500 rounded-xl flex items-center justify-center mb-6">
                                     <Code2 className="w-7 h-7" />
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-900 mb-3">Practice Problems</h3>
@@ -168,7 +179,7 @@ export default function Landing() {
                             </div>
 
                             <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-14 h-14 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-6">
+                                <div className="w-14 h-14 bg-primary-50 text-primary-500 rounded-xl flex items-center justify-center mb-6">
                                     <Video className="w-7 h-7" />
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-900 mb-3">Mock Interviews</h3>
@@ -178,7 +189,7 @@ export default function Landing() {
                             </div>
 
                             <div className="bg-white p-8 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                                <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-6">
+                                <div className="w-14 h-14 bg-primary-50 text-primary-500 rounded-xl flex items-center justify-center mb-6">
                                     <LineChart className="w-7 h-7" />
                                 </div>
                                 <h3 className="text-xl font-bold text-gray-900 mb-3">Track Progress</h3>

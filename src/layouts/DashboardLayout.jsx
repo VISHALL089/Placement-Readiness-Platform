@@ -10,8 +10,8 @@ import {
 
 const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'JD Analyzer', href: '/dashboard/analyzer', icon: Code2 },
-    { name: 'History', href: '/dashboard/history', icon: FileCheck2 },
+    { name: 'Practice', href: '/dashboard/analyzer', icon: Code2 },
+    { name: 'Assessments', href: '/dashboard/history', icon: FileCheck2 },
     { name: 'Resources', href: '/dashboard/resources', icon: Library },
     { name: 'Profile', href: '/dashboard/profile', icon: User },
 ];

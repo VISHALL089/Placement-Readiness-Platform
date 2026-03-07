@@ -126,13 +126,19 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                         onClick={() => copyToClipboard(data.plan7Days.map(p => `${p.day}: ${p.focus}`).join('\n'), 'plan')}
                         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all shadow-sm"
                     >
-                        {copied === 'plan' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />} Plan
+                        {copied === 'plan' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />} Copy 7-day plan
+                    </button>
+                    <button
+                        onClick={() => copyToClipboard(data.checklist.map(r => `${r.roundTitle}: ${r.items.join(', ')}`).join('\n'), 'round')}
+                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all shadow-sm"
+                    >
+                        {copied === 'round' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />} Copy round checklist
                     </button>
                     <button
                         onClick={() => copyToClipboard(data.questions.join('\n'), 'qs')}
                         className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-all shadow-sm"
                     >
-                        {copied === 'qs' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />} Qs
+                        {copied === 'qs' ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />} Copy 10 questions
                     </button>
                 </div>
             </div>
@@ -140,7 +146,7 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Summary & Interactive Skills */}
                 <div className="lg:col-span-1 space-y-8">
-                    <Card className="bg-gradient-to-br from-primary-600 to-indigo-700 text-white overflow-hidden relative border-none shadow-2xl shadow-primary-500/20">
+                    <Card className="bg-gradient-to-br from-primary-600 to-black text-white overflow-hidden relative border-none shadow-2xl shadow-primary-500/20">
                         <div className="absolute top-0 right-0 p-4 opacity-10">
                             <Award className="w-32 h-32 text-white" />
                         </div>
@@ -386,7 +392,7 @@ ${data.questions.map((q, i) => `${i + 1}. ${q}`).join('\n')}
                                 onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })}
                                 className="flex-1 md:flex-none px-8 py-3 bg-primary-500 text-white font-bold rounded-xl hover:bg-primary-600 transition-all shadow-lg shadow-primary-500/20 hover:-translate-y-0.5"
                             >
-                                Execute Plan
+                                Start Day 1 plan now
                             </button>
                         </div>
                     </div>

@@ -16,7 +16,7 @@ const mockSkillData = [
     { subject: 'DSA', A: 75, fullMark: 100 },
     { subject: 'System Design', A: 60, fullMark: 100 },
     { subject: 'Communication', A: 80, fullMark: 100 },
-    { subject: 'Resume', A: 85, fullMark: 100 },
+    { subject: 'Core CS', A: 85, fullMark: 100 },
     { subject: 'Aptitude', A: 70, fullMark: 100 },
 ];
 
@@ -113,8 +113,8 @@ export default function Dashboard() {
                                             <Radar
                                                 name="Student"
                                                 dataKey="A"
-                                                stroke="hsl(245, 58%, 51%)"
-                                                fill="hsl(245, 58%, 51%)"
+                                                stroke="#8B0000"
+                                                fill="#8B0000"
                                                 fillOpacity={0.6}
                                             />
                                         </RadarChart>
@@ -124,12 +124,29 @@ export default function Dashboard() {
                         </Card>
                     </div>
 
+                    {/* Goal Progress */}
+                    <Card className="border-none shadow-xl shadow-gray-200/50 bg-white">
+                        <CardHeader>
+                            <CardTitle className="text-lg text-gray-700">Weekly Goal Progress</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-bold text-gray-600">12/20 problems solved</span>
+                                <span className="text-sm font-black text-primary-500">60%</span>
+                            </div>
+                            <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden">
+                                <div className="bg-primary-500 h-full w-[60%] rounded-full"></div>
+                            </div>
+                            <p className="mt-4 text-xs text-gray-400 italic">8 more to reach your weekly streak!</p>
+                        </CardContent>
+                    </Card>
+
                     {/* Quick Analysis CTA */}
                     <Card className="bg-primary-500 border-none relative overflow-hidden group">
                         <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 group-hover:scale-110 transition-transform duration-700"></div>
                         <CardContent className="p-10 relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                             <div className="text-center md:text-left">
-                                <h3 className="text-2xl font-bold text-white mb-2">Ready for your next interview?</h3>
+                                <h3 className="text-2xl font-bold text-white mb-2 font-serif">Ready for your next interview?</h3>
                                 <p className="text-primary-100">Upload a JD and get a personalized 7-day preparation roadmap in seconds.</p>
                             </div>
                             <Link to="/dashboard/analyzer" className="px-8 py-4 bg-white text-primary-500 rounded-xl font-bold whitespace-nowrap hover:bg-gray-50 transition-colors flex items-center gap-2 group">
@@ -147,6 +164,18 @@ export default function Dashboard() {
                             <Link to="/dashboard/history" className="text-sm text-primary-500 font-medium hover:underline">View All</Link>
                         </CardHeader>
                         <CardContent>
+                            <div className="mb-6 p-4 bg-primary-50 rounded-2xl border border-primary-100">
+                                <h4 className="text-xs font-black uppercase text-primary-600 mb-2 tracking-widest">Continue Practice</h4>
+                                <div className="flex justify-between items-center">
+                                    <div className="min-w-0">
+                                        <p className="font-bold text-gray-900 truncate">Graph Traversals (BFS/DFS)</p>
+                                        <p className="text-[10px] text-gray-500">Last practiced 2h ago</p>
+                                    </div>
+                                    <Link to="/dashboard/analyzer" className="p-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors">
+                                        <PlayCircle className="w-4 h-4" />
+                                    </Link>
+                                </div>
+                            </div>
                             {history.length === 0 ? (
                                 <div className="text-center py-10">
                                     <p className="text-gray-400 text-sm">No recent analyses.</p>
@@ -184,9 +213,9 @@ export default function Dashboard() {
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-400 text-sm">Deployment Ready</span>
                                     {Object.values(JSON.parse(localStorage.getItem('prp_test_checklist') || '{}')).filter(Boolean).length === 10 ? (
-                                        <span className="text-emerald-400 text-xs font-black uppercase">Yes</span>
+                                        <span className="text-white bg-primary-500 px-2 py-0.5 rounded text-[10px] font-black uppercase">Yes</span>
                                     ) : (
-                                        <span className="text-amber-400 text-xs font-black uppercase italic">Pending</span>
+                                        <span className="text-primary-400 text-xs font-black uppercase italic">Pending</span>
                                     )}
                                 </div>
                                 <Link to="/prp/proof" className="w-full flex items-center justify-center gap-2 py-3 bg-white/10 hover:bg-white/20 transition-colors rounded-xl font-bold text-sm border border-white/10">
@@ -203,7 +232,7 @@ export default function Dashboard() {
                         <CardContent>
                             <ul className="space-y-4">
                                 <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                    <div className="bg-orange-100 text-orange-600 p-2 rounded-lg mt-0.5">
+                                    <div className="bg-primary-100 text-primary-600 p-2 rounded-lg mt-0.5">
                                         <Calendar className="w-4 h-4" />
                                     </div>
                                     <div>
@@ -212,7 +241,7 @@ export default function Dashboard() {
                                     </div>
                                 </li>
                                 <li className="flex items-start gap-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                    <div className="bg-blue-100 text-blue-600 p-2 rounded-lg mt-0.5">
+                                    <div className="bg-primary-50 text-primary-500 p-2 rounded-lg mt-0.5">
                                         <Calendar className="w-4 h-4" />
                                     </div>
                                     <div>

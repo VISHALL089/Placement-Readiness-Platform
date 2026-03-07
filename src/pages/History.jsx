@@ -62,9 +62,9 @@ export default function History() {
                             <Card className="hover:border-primary-300 hover:shadow-lg transition-all cursor-pointer group">
                                 <CardContent className="p-6 flex items-center justify-between">
                                     <div className="flex gap-6 items-center">
-                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-xl ${item.finalScore > 80 ? 'bg-green-50 text-green-600' :
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-xl ${item.finalScore > 80 ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' :
                                             item.finalScore > 50 ? 'bg-primary-50 text-primary-500' :
-                                                'bg-orange-50 text-orange-500'
+                                                'bg-gray-100 text-gray-500'
                                             }`}>
                                             {item.finalScore}
                                         </div>
