@@ -8,7 +8,7 @@ import {
     PolarRadiusAxis,
     ResponsiveContainer
 } from 'recharts';
-import { Calendar, PlayCircle, Send, PlusCircle, ArrowRight, AlertCircle } from 'lucide-react';
+import { Calendar, PlayCircle, Send, PlusCircle, ArrowRight, AlertCircle, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getHistory } from '../lib/analyzer';
 
@@ -169,6 +169,30 @@ export default function Dashboard() {
                                     ))}
                                 </ul>
                             )}
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border-none shadow-xl shadow-gray-200/50 bg-gray-900 text-white overflow-hidden relative">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/20 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-lg flex items-center gap-2">
+                                <ShieldCheck className="w-5 h-5 text-primary-400" /> Platform Status
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-400 text-sm">Deployment Ready</span>
+                                    {Object.values(JSON.parse(localStorage.getItem('prp_test_checklist') || '{}')).filter(Boolean).length === 10 ? (
+                                        <span className="text-emerald-400 text-xs font-black uppercase">Yes</span>
+                                    ) : (
+                                        <span className="text-amber-400 text-xs font-black uppercase italic">Pending</span>
+                                    )}
+                                </div>
+                                <Link to="/prp/proof" className="w-full flex items-center justify-center gap-2 py-3 bg-white/10 hover:bg-white/20 transition-colors rounded-xl font-bold text-sm border border-white/10">
+                                    View Proof of Work <ArrowRight className="w-4 h-4" />
+                                </Link>
+                            </div>
                         </CardContent>
                     </Card>
 
